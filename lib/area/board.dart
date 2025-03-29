@@ -1,4 +1,5 @@
 import 'package:dart_console/dart_console.dart';
+import 'package:dora_the_explorer/utils/console_control.dart';
 
 import 'square.dart';
 
@@ -12,15 +13,21 @@ class Board {
 
 
   // ## CONSTRUCTORS --- --- ---
-  Board({required this.consoleControl, required this.maze});
+  Board({
+    required this.consoleControl, 
+    required this.horizontalLength, 
+    required this.verticalLength,
+    }): 
+      frame = Frame(horizontalLength, verticalLength),
+      maze = Maze.placed(horizontalLength: horizontalLength,verticalLength: verticalLength);
   
   
 
   // ## PROPS --- --- ---
-  late final int _verticalLength, _horizontalLength;
-
+  late final int verticalLength, horizontalLength;
   final ConsoleControl consoleControl;
-  final List<List<Square>> maze;
+  final Maze maze;
+  final Frame frame;
   // injection of the frameS
 
 
@@ -29,39 +36,43 @@ class Board {
 
 
   // to the write the frame and the maze
-  void letItSo() {
+  void printFrame() {
     // for a clean slade
     consoleControl.clean();
-    // upper horizontal bar
-    consoleControl.write(_horizontalCoordinates());
-    consoleControl.writeLine(horizontalWallString());
 
-    // left vertical bar
-    consoleControl.write(verticalWallString());
+    // upper horizontal numbar
+    consoleControl.writeLine(frame.horizontalNumBar());
+    // upper horizontal wall
+    consoleControl.writeLine(frame.horizontalWall());
+    // left vertical wall
+    // consoleControl.verticalWrite(2, frame.verticalWall());
+    consoleControl.writeBottom(consoleControl.getReturnPosition());
+    
+    // consoleControl.writeBottom(consoleControl.getBottomLimit());
+    // bottom vertical wall
+    // consoleControl.writeRaw('(${consoleControl.returnPosition.col}, ${consoleControl.returnPosition.col})');
+    
+    // consoleControl.writeBottom(consoleControl.getReturnPosition());
+    // consoleControl.write(frame.horizontalWall());
+    // consoleControl.ping();
+
+    // right vertical wall
+    // consoleControl.verticalWrite(2, frame.verticalWall());
+
+
+
+    // upper horizontal bar
+    // consoleControl.writeLineRaw(horizontalWallString());
+
+
+
 
     // maze area
-    // consoleControl.cursorPosition = Coordinate(_verticalLength + 1, 1);
+    
 
   }
 
-  // ## FRAME ---
 
-  // M: to create the horizontal coordinate numbers
-  String _horizontalCoordinates() {
-    String res = SPACE;
-    for (int i = 1; i <= _horizontalLength; i++) {
-      res += i < 10 ? '0$i' : '$i';
-    }
-    return '$res\n';
-  }
-
-
-
-  // ## UTIL FUNCTIONS --- --- ---
-
-  String horizontalWallString () => BLOCK * (_horizontalLength + 1);
-  
-  String verticalWallString () => ('$BLOCK\n') * _verticalLength;
 }
 
 
@@ -119,78 +130,46 @@ class Maze {
   // ## OVERRIDEN METHODS --- --- ---
 
   // ## UTIL METHODS --- --- ---
-  void print () {
-    
-  }
-
 }
 
 
 
 
-
-class ConsoleControl {
-  // ## CONSTRUCTOR --- --- ---
-  ConsoleControl() : console = Console();
-
-
-
-  // ## PROPS --- --- ---
-  final Console console;
-
-
-
-  // ## METHODS --- --- ---
-
-  void clean () => console.clearScreen();
-
-  void position (int X, int Y) => console.cursorPosition = Coordinate(Y, X);
-
-  void write (String text) => console.write(text);
-
-  void writeLine (String text) => console.writeLine(text);
-
-  void coloredWrite(ConsoleColor color, String text) {
-    console.setForegroundColor(color);
-    console.write(text);
-    console.resetColorAttributes();
-  } // M: utility method to write text with color
-
-}
 
 
 
 class Frame {
   // ## CONSTANTS --- --- ---
+  static final BLOCK = '\u2588\u2588';
+  static final SPACE = '  ';
+
 
   // ## CONSTRUCTORS --- --- ---
-  Frame(this.start);
+  Frame(this.horizontalLength, this.verticalLength, {this.base = const Coordinate(0, 0)});
   
+
   // ## PROPS --- --- ---
-  // final int horizontalLength, verticalLength;
-  int start;
-  // inner
+  final int horizontalLength, verticalLength;
+  final Coordinate base; // for improvement later
+
 
   // ## METHOD --- --- ---
+  String numBar (int length) {
+    String result = '';
+
+    for (int i = 1; i <= length; i++) {
+      result += i.toString().padLeft(2, '0');  // pad with 0 to ensure two digits
+    }
+    return result;
+  }
 
   // num bars
-  String horizontalNumBar () => '';
-  String verticalNumBar () => '';
+  String horizontalNumBar () => '  ${numBar(horizontalLength)}' ;
+  String verticalNumBar () => ' ${numBar(verticalLength)}';
 
   // walls
-  String horizontalTopWall () => '';
-  String horizontalBottomWall () => '';
-  // BLOCK * (_horizontalLength + 1);
-  String verticalLeftWall () => '';
-  String verticalRightWall () => '';
-  // ('$BLOCK\n') * _verticalLength; // this is not a good design i think cursor movement is required here
-
-
-  //   String _horizontalCoordinates() {
-  //   String res = SPACE;
-  //   for (int i = 1; i <= _horizontalLength; i++) {
-  //     res += i < 10 ? '0$i' : '$i';
-  //   }
-  //   return '$res\n';
-  // }
+  String horizontalWall () => BLOCK*(horizontalLength + 2);
+  String verticalWall () => BLOCK*(verticalLength + 1 );
 }
+
+
