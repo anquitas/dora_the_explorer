@@ -20,6 +20,5 @@ void main(List<String> arguments) {
   // var frm = Frame(6, 6);
   // c.clean();
   // c.verticalWrite(2, frm.verticalNumBar());
-  // c.write('bok');
 
 }

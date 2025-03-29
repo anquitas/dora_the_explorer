@@ -41,23 +41,26 @@ class Board {
     consoleControl.clean();
 
     // upper horizontal numbar
+    consoleControl.setReturnPosition(frame.base);
+    consoleControl.writeLine(frame.horizontalNumBar());
     consoleControl.writeLine(frame.horizontalNumBar());
     // upper horizontal wall
-    consoleControl.writeLine(frame.horizontalWall());
-    // left vertical wall
-    // consoleControl.verticalWrite(2, frame.verticalWall());
-    consoleControl.writeBottom(consoleControl.getReturnPosition());
-    
-    // consoleControl.writeBottom(consoleControl.getBottomLimit());
-    // bottom vertical wall
-    // consoleControl.writeRaw('(${consoleControl.returnPosition.col}, ${consoleControl.returnPosition.col})');
-    
-    // consoleControl.writeBottom(consoleControl.getReturnPosition());
-    // consoleControl.write(frame.horizontalWall());
-    // consoleControl.ping();
+    consoleControl.setReturnPosition(frame.wallBase);
+    consoleControl.write(frame.horizontalWall());
 
     // right vertical wall
-    // consoleControl.verticalWrite(2, frame.verticalWall());
+    consoleControl.setReturnPosition(frame.upperRightCorner());
+    consoleControl.verticalWrite(2, frame.verticalWall());
+    
+    // left vertical wall
+    consoleControl.setReturnPosition(frame.wallBase);
+    consoleControl.verticalWrite(2, frame.verticalWall());
+
+    // bottom horizontal wall
+    // consoleControl.ping();
+    consoleControl.setReturnPosition(frame.bottomLeftCorner());
+    consoleControl.write(frame.horizontalWall());
+    
 
 
 
@@ -151,9 +154,15 @@ class Frame {
   // ## PROPS --- --- ---
   final int horizontalLength, verticalLength;
   final Coordinate base; // for improvement later
+  late final wallBase = Coordinate(base.row + 1, base.col);
 
 
   // ## METHOD --- --- ---
+
+  Coordinate upperRightCorner () => Coordinate(wallBase.row, wallBase.col + horizontalLength*2 + 2);
+  Coordinate bottomLeftCorner () => Coordinate(wallBase.row + 2 + verticalLength, wallBase.col);
+
+
   String numBar (int length) {
     String result = '';
 
@@ -169,7 +178,7 @@ class Frame {
 
   // walls
   String horizontalWall () => BLOCK*(horizontalLength + 2);
-  String verticalWall () => BLOCK*(verticalLength + 1 );
+  String verticalWall () => BLOCK*(verticalLength + 2 );
 }
 
 

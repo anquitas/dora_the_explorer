@@ -6,18 +6,17 @@ import 'package:dart_console/dart_console.dart';
 class ConsoleControl {
   
   // ## CONSTANTS --- --- ---
-  static Coordinate ORIJIN = Coordinate(0, 0);
 
 
   // ## CONSTRUCTOR --- --- ---
-  ConsoleControl() : console = Console();
+  ConsoleControl() : console = Console(), returnPosition=Coordinate(0, 0), bottomLimit = Coordinate(0, 0);
 
 
 
   // ## PROPS --- --- ---
   final Console console;
-  Coordinate returnPosition = ORIJIN;
-  Coordinate bottomLimit = ORIJIN;
+  Coordinate returnPosition;
+  Coordinate bottomLimit;
   // Coordinate tagPosition;
 
 
@@ -65,9 +64,8 @@ class ConsoleControl {
     console.write(text);
 
     // set new return value 
-    int newCol = returnPosition.row + 1 < 1 ? 5 : returnPosition.row + 1;
+    int newCol = returnPosition.row + 1;
     Coordinate newLine = Coordinate(newCol, 0);
-    console.writeLine(newCol);
     
     setReturnPosition(newLine);
     // returnPosition = newLine;
@@ -75,6 +73,7 @@ class ConsoleControl {
     // move to bottom limit
     setBottomLimit(newLine);
     moveToBottomLimit();
+
   }
 
   void coloredWrite(ConsoleColor color, String text) {
@@ -105,15 +104,48 @@ class ConsoleControl {
     // get the most bottom position
     Coordinate lastPosition = Coordinate(startPosition.row + verticalLength, startPosition.col);
     // get the new return position
-    Coordinate newReturnPosition = Coordinate(startPosition.row, startPosition.col + verticalLength);
+    Coordinate newReturnPosition = Coordinate(startPosition.row + verticalLength, startPosition.col);
     // update the return position and bottom limit
-    returnPosition = startPosition;
+    // returnPosition = startPosition;
     setReturnPosition(newReturnPosition);
     // bottomLimit= lastPosition.row > bottomLimit.row ? lastPosition : bottomLimit;
     setBottomLimit(lastPosition);
     // set cursor position
     moveToBottomLimit();
   }
+
+  void verticalWriteLine (int horizontalLength, String text) {
+    // move to last valid position
+    moveToReturnPosition();
+    // calc vertical length based on horizontal length
+    int verticalLength = (text.length / horizontalLength).ceil();
+    // save start postion
+    Coordinate startPosition = console.cursorPosition ?? Coordinate(0, 0);
+    for (int i = 0; i < verticalLength; i++) {
+      // get horizontal line indexes
+      int startIdx = i * horizontalLength;
+      int endIdx = (i + 1) * horizontalLength;
+      // get the horizontal line
+      String line = text.substring(startIdx, endIdx > text.length ? text.length : endIdx);
+      // change the console position to required position
+      console.cursorPosition = Coordinate(startPosition.row + i, startPosition.col);
+      // write the console
+      console.write(line);
+  }
+
+    // get the most bottom position
+    Coordinate lastPosition = Coordinate(startPosition.row + verticalLength, startPosition.col);
+    // get the new return position
+    Coordinate newReturnPosition = Coordinate(startPosition.row, startPosition.col + horizontalLength);
+    // update the return position and bottom limit
+    // returnPosition = startPosition;
+    setReturnPosition(newReturnPosition);
+    // bottomLimit= lastPosition.row > bottomLimit.row ? lastPosition : bottomLimit;
+    setBottomLimit(lastPosition);
+    // set cursor position
+    moveToBottomLimit();
+  }
+
 
   // ## CURSOR FUNCTIONS --- --- ---
   void moveToBottomLimit()  {positionToCoordinate(bottomLimit);}
@@ -129,8 +161,8 @@ class ConsoleControl {
 
   Coordinate getCoordinate (int X, int Y) => Coordinate(Y, X);
   
-  String getReturnPosition () => '(${returnPosition.col}, ${returnPosition.col})';
+  String getReturnPosition () => '(${returnPosition.col}, ${returnPosition.row})';
 
-  String getBottomLimit () => '(${bottomLimit.col}, ${bottomLimit.col})';
+  String getBottomLimit () => '(${bottomLimit.col}, ${bottomLimit.row})';
 
 }
