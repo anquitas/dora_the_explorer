@@ -55,6 +55,7 @@ class PathFinder {
         // add the starting location wo breaking the backracking loop
         path.add(workingMaze.start);
         // reverse direction to be (start -> goal)
+        path.forEach((square) => square.content = Content.wall);
         return path.reversed.toList();
       }
 
