@@ -1,7 +1,6 @@
 import 'package:dart_console/dart_console.dart';
 import 'package:dora_the_explorer/utils/console_control.dart';
-
-import 'square.dart';
+import 'maze.dart';
 
 
 class Board {
@@ -75,65 +74,23 @@ class Board {
 
   }
 
+  void printMaze () {
+    int i = 0;
+    // consoleControl.ping();
+    for (var row in maze.area) {
+      int realCol = maze.realBase.col;
+      int realRow = maze.realBase.row;
+      // consoleControl.setReturnPosition(Coordinate(2 + i, 2));
+      consoleControl.setReturnPosition(Coordinate(realCol + i, realRow));
+      consoleControl.write(row.map((square) => square.toString()).join(''));
+      i++;
+    }
+    consoleControl.ping();
+  }
 
 }
 
 
-class Maze {
-  // ## CONSTRUCTORS --- --- ---
-  Maze.verbose({
-    required this.startX,
-    required this.startY,
-    required this.horizontalLength,
-    required this.verticalLength,
-  });
-
-  // maze structure should be created by a seperate grid class
-
-  Maze.placed({required this.horizontalLength, required this.verticalLength})
-    : startX = 3,
-      startY = 3;
-
-  Maze.ready()
-    : startX = 3,
-      startY = 3,
-      horizontalLength = 6,
-      verticalLength = 6;
-
-  // ## PROPS --- --- ---
-  final int horizontalLength, verticalLength;
-  final int startX, startY;
-  late List<List<Square>> area;
-  late final Console console;
-
-
-  // ## METHODS --- --- ---
-  void init() {
-    // go over creating nodes with right coordinates that also matches data implementation and visual representation
-    area = List.generate(
-      horizontalLength,
-      (x) => List.generate(
-        verticalLength,
-        (y) => Square(x, y, Content.road),
-        growable: false,
-      ),
-    );
-    assert(area.length == horizontalLength);
-  }
-
-  void inject(Console console) => this.console = console;
-
-
-  Square findSquare(int X, int Y) {
-    Square res = area[X+1][Y+1];
-    assert(res.coordinate.check(X, Y));
-    return res;
-  }
-
-  // ## OVERRIDEN METHODS --- --- ---
-
-  // ## UTIL METHODS --- --- ---
-}
 
 
 
