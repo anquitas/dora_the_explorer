@@ -4,15 +4,19 @@ enum Content {
   // ## VALUES --- --- ---
   wall('\u2588\u2588'), // █
   road('  '), // empty space
-  explored('\u2593\u2593'), // ▓
-  trace('\u2022\u2022'), // •
+  explored('\u2022\u2022'), // •
+  trace('\u2593\u2593'), // ▓
+  start('SS'),
+  goal('GG'),
   opened('\u2591\u2591'); // ░
+  
 
   // ## CONSTRUCTOR --- --- ---
   const Content(this.symbol);
 
   // ## PROPS --- --- ---
   final String symbol;
+  
 
   // ## METHODS --- --- ---
   @override
@@ -59,7 +63,7 @@ class Maze {
       horizontalLength,
       (x) => List.generate(
         verticalLength,
-        (y) => Square(x, y, Content.road,realBase),
+        (y) => Square(x+1, y+1, Content.road,realBase),
         growable: false,
       ),
     );
@@ -74,6 +78,7 @@ class Maze {
     return res;
   }
 
+
   List<Square> menhattenNeightbors (Square square) {
     // manhatten neighbor list to return
     List<Square> neighbors = [];
@@ -81,16 +86,20 @@ class Maze {
     int x = square.X;
     int y = square.Y;
 
-  if (x > 0) neighbors.add(area[x - 1][y]); // Left
-  if (x < horizontalLength - 1) neighbors.add(area[x + 1][y]); // Right
-  if (y > 0) neighbors.add(area[x][y - 1]); // Up
-  if (y < verticalLength - 1) neighbors.add(area[x][y + 1]); // Down
+  if (x > 1 && findSquare(x-1,y).notWall()) neighbors.add(findSquare(x-1,y)); // Left
+  if (x < horizontalLength  && findSquare(x+1,y).notWall()) neighbors.add(findSquare(x+1,y)); // Right
+  if (y > 1 && findSquare(x,y-1).notWall()) neighbors.add(findSquare(x,y-1)); // Up
+  if (y < verticalLength && findSquare(x,y+1).notWall()) neighbors.add(findSquare(x,y+1)); // Down
 
   return neighbors;
   }
 
 
-
+  void printMazeCoordinates () {
+    for (var row in area) {
+    print(row.map((square) => square.coordinate).join());
+  }
+  }
 
   // ## OVERRIDEN METHODS --- --- ---
 
@@ -118,7 +127,7 @@ class Square {
   Square? parent;
 
   // ## GETTERS --- --- ---
-  RealCoordinate get real => RealCoordinate(coordinate.real.X*length + realBase.X, coordinate.real.Y*length + realBase.Y);
+  RealCoordinate get real => coordinate.real;
 
   int get X => coordinate.X;
   int get Y => coordinate.Y;
@@ -127,8 +136,16 @@ class Square {
 
   int get fCost => gCost + hCost;
 
+  // ## SETTERS --- --- ---
+    set setContent(Content newContent) {
+    if (content != Content.start && content != Content.goal) {
+      content = newContent;
+    }
+  }
+
 
   // ## METHODS --- --- ---
+  bool notWall () => content != Content.wall;
 
   
 
@@ -178,13 +195,13 @@ class MazeCoordinate {
 class RealCoordinate {
   // ## CONSTRUCTORS --- --- ---
   RealCoordinate(this.X, this.Y);
-  RealCoordinate.fromMazeCoordinate(int X, int Y): X=X-1, Y=Y-1;
+  RealCoordinate.fromMazeCoordinate(int X, int Y): X=(X-1)*2, Y=(Y-1);
   RealCoordinate.origin() : X = 0, Y = 0;
 
   // ## PROPERTIES --- --- ---
   int X, Y;
-  int get col => Y;
-  int get row => X;
+  int get col => X;
+  int get row => Y;
 
   // ## METHODS --- --- ---
   bool check(int X, int Y) => X == this.X && Y == this.Y;

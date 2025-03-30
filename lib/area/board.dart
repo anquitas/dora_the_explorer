@@ -59,34 +59,30 @@ class Board {
     // consoleControl.ping();
     consoleControl.setReturnPosition(frame.bottomLeftCorner());
     consoleControl.write(frame.horizontalWall());
-    
-
-
-
-    // upper horizontal bar
-    // consoleControl.writeLineRaw(horizontalWallString());
-
-
-
-
-    // maze area
-    
-
   }
 
   void printMaze () {
     int i = 0;
     // consoleControl.ping();
-    for (var row in maze.area) {
       int realCol = maze.realBase.col;
       int realRow = maze.realBase.row;
-      // consoleControl.setReturnPosition(Coordinate(2 + i, 2));
-      consoleControl.setReturnPosition(Coordinate(realCol + i, realRow));
-      consoleControl.write(row.map((square) => square.toString()).join(''));
+    // for (var row in maze.area) {
+    //   // consoleControl.setReturnPosition(Coordinate(2 + i, 2));
+    //   // consoleControl.setReturnPosition(Coordinate(realRow +i, realCol));
+    //   // consoleControl.write(row.map((square) => square.toString()).join(''));
+    // }
+      for (var mazeCol in maze.area) {
+        for (var sqr in mazeCol ) {
+          consoleControl.setReturnPosition(Coordinate(realRow + sqr.real.row, realCol + sqr.real.col));
+          consoleControl.write(sqr.toString());
+        }
+      }
       i++;
-    }
-    consoleControl.ping();
+    
+    // consoleControl.ping();
   }
+
+
 
 }
 
@@ -117,7 +113,7 @@ class Frame {
   // ## METHOD --- --- ---
 
   Coordinate upperRightCorner () => Coordinate(wallBase.row, wallBase.col + horizontalLength*2 + 2);
-  Coordinate bottomLeftCorner () => Coordinate(wallBase.row + 2 + verticalLength, wallBase.col);
+  Coordinate bottomLeftCorner () => Coordinate(wallBase.row + 1 + verticalLength, wallBase.col);
 
 
   String numBar (int length) {
@@ -135,7 +131,7 @@ class Frame {
 
   // walls
   String horizontalWall () => BLOCK*(horizontalLength + 2);
-  String verticalWall () => BLOCK*(verticalLength + 2 );
+  String verticalWall () => BLOCK*(verticalLength+1);
 }
 
 
