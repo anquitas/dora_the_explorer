@@ -21,15 +21,19 @@ void main(List<String> arguments) {
   Square squareS = lab.maze.findSquare(1,3);
   Square squareG = lab.maze.findSquare(8,6);
   Square squareW = lab.maze.findSquare(4, 3); // coordinate system
+  Square squareW2 = lab.maze.findSquare(4, 4); // coordinate system
+  Square squareW3 = lab.maze.findSquare(5, 5); // coordinate system
   // square.content=Content.trace;
   Maze maze = lab.maze;
   maze.start = squareS;
   maze.goal = squareG;
   PathFinder pf = PathFinder(workingMaze: lab.maze);
   squareW.setContent = Content.wall;
-  var res = pf.discover();
+  squareW2.setContent = Content.wall;
+  squareW3.setContent = Content.wall;
   squareG.content = Content.goal;
   squareS.content = Content.start;
+  var res = pf.discover();
   lab.printMaze();
   // print(square);
   // var frm = Frame(6, 6);

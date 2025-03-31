@@ -1,2 +1,5 @@
-A sample command-line application with an entrypoint in `bin/`, library code
-in `lib/`, and example unit test in `test/`.
+
+
+## HAZIRLAYANLAR
++ Oğuz ŞAHİNGÖZ - 221030210015
++ Serpil ÇETİNKAYA - 221030210002
